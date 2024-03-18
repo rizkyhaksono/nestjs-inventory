@@ -101,12 +101,12 @@ Headers :
 
 - Authorization: token
 
-Request Body :
+Request Body (optional):
 
 ```json
 {
-  "password": "rahasia", // optional, if want to change password
-  "name": "Rizky Haksono" // optional, if want to change name
+  "password": "new_password",
+  "email": "new_email@example.com"
 }
 ```
 
@@ -116,7 +116,7 @@ Response Body (Success) :
 {
   "data": {
     "username": "rizky",
-    "name": "Rizky Haksono"
+    "email": "new_email@example.com"
   }
 }
 ```
