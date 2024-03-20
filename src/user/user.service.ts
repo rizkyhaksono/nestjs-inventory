@@ -1,13 +1,18 @@
-import { HttpException, Inject, Injectable } from "@nestjs/common";
-import { LoginUserRequest, RegisterUserRequest, UpdateUserRequest, UserResponse } from "src/model/user.model";
-import { ValidationService } from "src/common/validation.service";
+import { HttpException, Inject, Injectable } from '@nestjs/common';
+import {
+  LoginUserRequest,
+  RegisterUserRequest,
+  UpdateUserRequest,
+  UserResponse,
+} from 'src/model/user.model';
+import { ValidationService } from 'src/common/validation.service';
 import { Logger } from 'winston';
-import { WINSTON_MODULE_PROVIDER } from "nest-winston";
-import { PrismaService } from "src/common/prisma.service";
-import { UserValidation } from "./user.validation";
-import * as bcrypt from "bcrypt";
-import { v4 as uuid } from "uuid";
-import { User } from "@prisma/client";
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { PrismaService } from 'src/common/prisma.service';
+import { UserValidation } from './user.validation';
+import * as bcrypt from 'bcrypt';
+import { v4 as uuid } from 'uuid';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -15,41 +20,42 @@ export class UserService {
     private validationService: ValidationService,
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
     private prismaService: PrismaService,
-  ) { }
+  ) {}
 
   async register(request: RegisterUserRequest): Promise<UserResponse> {
-    this.logger.debug(`Register new user ${JSON.stringify(request)}`)
-    const registerRequest: RegisterUserRequest = this.validationService.validate(UserValidation.REGISTER, request);
+    this.logger.debug(`Register new user ${JSON.stringify(request)}`);
+    const registerRequest: RegisterUserRequest =
+      this.validationService.validate(UserValidation.REGISTER, request);
     const totalUserWithSameUsername = await this.prismaService.user.count({
       where: {
-        username: registerRequest.username
-      }
-    })
+        username: registerRequest.username,
+      },
+    });
 
     if (totalUserWithSameUsername != 0) {
-      throw new HttpException('Username already exists', 400)
+      throw new HttpException('Username already exists', 400);
     }
 
     registerRequest.password = await bcrypt.hash(registerRequest.password, 10);
 
     const user = await this.prismaService.user.create({
-      data: registerRequest
-    })
+      data: registerRequest,
+    });
 
     return {
       username: user.username,
       email: user.email,
-    }
+    };
   }
 
-  async login (request: LoginUserRequest): Promise<UserResponse> {
+  async login(request: LoginUserRequest): Promise<UserResponse> {
     this.logger.debug(`UserService.login(${JSON.stringify(request)})`);
     const loginRequest: LoginUserRequest = this.validationService.validate(
       UserValidation.LOGIN,
       request,
     );
 
-    let user = await this.prismaService.user.findUnique({
+    const user = await this.prismaService.user.findUnique({
       where: {
         email: loginRequest.email,
       },
@@ -79,10 +85,10 @@ export class UserService {
 
     return {
       username: updatedUser.username,
-      email: updatedUser.email
-    }
+      email: updatedUser.email,
+    };
   }
-  
+
   async get(user: User): Promise<UserResponse> {
     return {
       username: user.username,

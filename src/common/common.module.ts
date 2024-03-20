@@ -2,7 +2,7 @@ import { Global, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 import { ConfigModule } from '@nestjs/config';
-import { APP_FILTER } from '@nestjs/core'
+import { APP_FILTER } from '@nestjs/core';
 import { PrismaService } from './prisma.service';
 import { ValidationService } from './validation.service';
 import { ErrorFilter } from './error.filter';

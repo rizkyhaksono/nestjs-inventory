@@ -1,4 +1,8 @@
-import { createParamDecorator, ExecutionContext, HttpException } from "@nestjs/common";
+import {
+  createParamDecorator,
+  ExecutionContext,
+  HttpException,
+} from '@nestjs/common';
 
 export const Auth = createParamDecorator(
   (data: unknown, context: ExecutionContext) => {
