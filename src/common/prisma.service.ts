@@ -5,7 +5,7 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class PrismaService
-  extends PrismaClient
+  extends PrismaClient<Prisma.PrismaClientOptions, string>
   implements OnModuleInit
 {
   constructor(
@@ -34,7 +34,7 @@ export class PrismaService
   }
 
   onModuleInit() {
-    this.$on('log', (e) => {
+    this.$on('info', (e) => {
       this.logger.log(e);
     });
     this.$on('warn', (e) => {
