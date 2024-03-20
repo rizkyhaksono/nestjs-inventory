@@ -86,13 +86,14 @@ export class UserService {
     return {
       username: updatedUser.username,
       email: updatedUser.email,
+      token: updatedUser.token
     };
   }
 
-  async get(user: User): Promise<UserResponse> {
+  async get(): Promise<any> {
+    const users: User[] = await this.prismaService.user.findMany();
     return {
-      username: user.username,
-      email: user.email,
+      users
     };
   }
 

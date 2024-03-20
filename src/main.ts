@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
-async function bootstrap() {
+async function main() {
   const app = await NestFactory.create(AppModule);
 
   const logger = app.get(WINSTON_MODULE_NEST_PROVIDER);
@@ -10,4 +10,4 @@ async function bootstrap() {
 
   await app.listen(3000);
 }
-bootstrap();
+main();
