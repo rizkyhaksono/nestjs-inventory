@@ -1,4 +1,9 @@
-import { HttpException, Inject, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import {
   LoginUserRequest,
   RegisterUserRequest,
@@ -86,14 +91,14 @@ export class UserService {
     return {
       username: updatedUser.username,
       email: updatedUser.email,
-      token: updatedUser.token
+      token: updatedUser.token,
     };
   }
 
   async get(): Promise<any> {
     const users: User[] = await this.prismaService.user.findMany();
     return {
-      users
+      users,
     };
   }
 

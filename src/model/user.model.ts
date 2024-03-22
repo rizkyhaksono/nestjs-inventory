@@ -15,7 +15,8 @@ export class UpdateUserRequest {
 }
 
 export class UserResponse {
-  username: string;
-  email: string;
+  username?: string;
+  email?: string;
   token?: string;
+  data?: object;
 }

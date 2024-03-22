@@ -22,5 +22,5 @@ export class DeleteItemRequest {
 export class ItemResponse {
   name: string;
   quantity: number;
-  userId: string; 
+  userId: string;
 }

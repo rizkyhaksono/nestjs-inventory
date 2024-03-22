@@ -1,4 +1,8 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import {
+  Injectable,
+  NestMiddleware,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 
 @Injectable()
@@ -7,7 +11,12 @@ export class AuthMiddleware implements NestMiddleware {
 
   async use(req: any, res: any, next: (error?: any) => void) {
     const token = req.headers['authorization'] as string;
-    if (token) {
+
+    if (!token) {
+      throw new UnauthorizedException('Authorization header is missing');
+    }
+
+    try {
       const user = await this.prismaService.user.findFirst({
         where: {
           token: token,
@@ -17,8 +26,10 @@ export class AuthMiddleware implements NestMiddleware {
       if (user) {
         req.user = user;
       }
-    }
 
-    next();
+      next();
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token');
+    }
   }
 }
