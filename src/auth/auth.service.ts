@@ -25,10 +25,19 @@ export class AuthService {
       throw new NotFoundException(`Invalid password`)
     }
 
-    return {
-      accessToken: this.jwtService.sign({
+    const accessToken = await this.jwtService.signAsync({
+      uuid: user.uuid
+    })
+
+    await this.prisma.user.update({
+      where: {
         uuid: user.uuid
-      })
-    }
+      },
+      data: {
+        token: accessToken
+      }
+    });
+
+    return { accessToken: accessToken };
   }
 }

@@ -18,6 +18,7 @@ export class UserController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiCreatedResponse({ type: UserEntity, isArray: true})
   async findAll() {
     const users = await this.userService.findAll()
@@ -26,6 +27,7 @@ export class UserController {
 
   @Get(':uuid')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiCreatedResponse({ type: UserEntity })
   async findOne(@Param('uuid') uuid: string) {
     return new UserEntity(await this.userService.findOne(uuid))
@@ -33,6 +35,7 @@ export class UserController {
 
   @Patch(':uuid')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiCreatedResponse({ type: UserEntity })
   async update(@Param('uuid') uuid: string, @Body() updateUserDto: any) {
     return new UserEntity(await this.userService.update(uuid, updateUserDto))
@@ -40,6 +43,7 @@ export class UserController {
 
   @Delete(':uuid')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiCreatedResponse({ type: UserEntity })
   async remove(@Param('uuid') uuid: string) {
     return new UserEntity(await this.userService.remove(uuid))
