@@ -1,81 +1,47 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  Patch,
-  Post,
-} from '@nestjs/common';
-import { UserService } from './user.service';
-import { WebResponse } from 'src/model/web.model';
-import {
-  LoginUserRequest,
-  RegisterUserRequest,
-  UpdateUserRequest,
-  UserResponse,
-} from 'src/model/user.model';
-import { Auth } from 'src/common/auth.decorator';
-import { User } from '@prisma/client';
+import { Controller, Get, Body, Post, Patch, Param, Delete, ParseIntPipe, UseGuards } from "@nestjs/common";
+import { UserService } from "./user.service";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
+import { UserEntity } from "./entity/user.entity";
+import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 
-@Controller('/api/user')
+@Controller('user')
+@ApiTags('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
-  @Post('/register')
-  @HttpCode(201)
-  async register(
-    @Body() request: RegisterUserRequest,
-  ): Promise<WebResponse<UserResponse>> {
-    const result = await this.userService.register(request);
-    return {
-      success: true,
-      data: result,
-    };
-  }
-
-  @Post('/login')
-  @HttpCode(200)
-  async login(
-    @Body() request: LoginUserRequest,
-  ): Promise<WebResponse<UserResponse>> {
-    const result = await this.userService.login(request);
-    return {
-      success: true,
-      data: result,
-    };
+  @Post()
+  @ApiCreatedResponse({ type: UserEntity })
+  async create(@Body() createUserDto: CreateUserDto) {
+    return new UserEntity(await this.userService.create(createUserDto))
   }
 
   @Get()
-  @HttpCode(200)
-  async get(@Auth() user: User): Promise<WebResponse<UserResponse>> {
-    console.log(user);
-    const result = await this.userService.get();
-    return {
-      success: true,
-      data: result,
-    };
+  @UseGuards(JwtAuthGuard)
+  @ApiCreatedResponse({ type: UserEntity, isArray: true})
+  async findAll() {
+    const users = await this.userService.findAll()
+    return users.map((user) => new UserEntity(user))
   }
 
-  @Patch()
-  @HttpCode(201)
-  async update(
-    @Auth() user: User,
-    @Body() request: UpdateUserRequest,
-  ): Promise<WebResponse<UserResponse>> {
-    const result = await this.userService.update(user, request);
-    return {
-      success: true,
-      data: result,
-    };
+  @Get(':uuid')
+  @UseGuards(JwtAuthGuard)
+  @ApiCreatedResponse({ type: UserEntity })
+  async findOne(@Param('uuid') uuid: string) {
+    return new UserEntity(await this.userService.findOne(uuid))
   }
 
-  @Delete()
-  @HttpCode(201)
-  async logout(@Auth() user: User): Promise<WebResponse<boolean>> {
-    await this.userService.logout(user);
-    return {
-      success: true,
-    };
+  @Patch(':uuid')
+  @UseGuards(JwtAuthGuard)
+  @ApiCreatedResponse({ type: UserEntity })
+  async update(@Param('uuid') uuid: string, @Body() updateUserDto: any) {
+    return new UserEntity(await this.userService.update(uuid, updateUserDto))
+  }
+
+  @Delete(':uuid')
+  @UseGuards(JwtAuthGuard)
+  @ApiCreatedResponse({ type: UserEntity })
+  async remove(@Param('uuid') uuid: string) {
+    return new UserEntity(await this.userService.remove(uuid))
   }
 }

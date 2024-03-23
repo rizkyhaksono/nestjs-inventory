@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { CommonModule } from './common/common.module';
 import { UserModule } from './user/user.module';
-import { ItemModule } from './item/item.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [CommonModule, UserModule, ItemModule],
+  imports: [PrismaModule, AuthModule, UserModule, ConfigModule.forRoot({isGlobal: true})],
   controllers: [],
   providers: [],
 })
