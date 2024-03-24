@@ -7,11 +7,11 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   async findAll() {
-    return this.prisma.user.findMany();
+    return await this.prisma.user.findMany();
   }
 
   async findOne(uuid: string) {
-    return this.prisma.user.findUnique({
+    return await this.prisma.user.findUnique({
       where: {
         uuid: uuid,
       },
@@ -19,7 +19,7 @@ export class UserService {
   }
 
   async update(uuid: string, updateUserDto: UpdateUserDto) {
-    return this.prisma.user.update({
+    return await this.prisma.user.update({
       where: {
         uuid: uuid,
       },
@@ -28,7 +28,7 @@ export class UserService {
   }
 
   async remove(uuid: string) {
-    return this.prisma.user.delete({
+    return await this.prisma.user.delete({
       where: {
         uuid: uuid,
       },

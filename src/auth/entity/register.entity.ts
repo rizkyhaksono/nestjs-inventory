@@ -22,9 +22,9 @@ export class RegisterEntity implements User {
   @Exclude()
   password: string;
 
-  @ApiProperty()
+  @Exclude()
   createdAt: Date;
 
-  @ApiProperty()
+  @Exclude()
   updatedAt: Date;
 }
