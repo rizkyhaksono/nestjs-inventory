@@ -1,4 +1,4 @@
-import { NestFactory, Reflector} from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
@@ -11,7 +11,7 @@ async function main() {
 
   const config = new DocumentBuilder()
     .setTitle('Nest Inventory')
-    .setDescription('The Nest Inventory API description')
+    .setDescription('Nest Inventory API to store items with Authentication and Authorization')
     .setVersion('1.0.0')
     .addBearerAuth()
     .build();
