@@ -11,7 +11,9 @@ async function main() {
 
   const config = new DocumentBuilder()
     .setTitle('Nest Inventory')
-    .setDescription('Nest Inventory API to store items with Authentication and Authorization')
+    .setDescription(
+      'Nest Inventory API to store items with Authentication and Authorization',
+    )
     .setVersion('1.0.0')
     .addBearerAuth()
     .build();

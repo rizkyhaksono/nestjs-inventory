@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import * as bcrypt from 'bcrypt';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -18,7 +18,7 @@ export class UserService {
     });
   }
 
-  async update(uuid: string, updateUserDto: any) {
+  async update(uuid: string, updateUserDto: UpdateUserDto) {
     return this.prisma.user.update({
       where: {
         uuid: uuid,

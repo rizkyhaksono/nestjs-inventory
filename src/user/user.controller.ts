@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Body,
-  Post,
   Patch,
   Param,
   Delete,
@@ -17,6 +16,7 @@ import {
 } from '@nestjs/swagger';
 import { UserEntity } from './entity/user.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('api/user')
 @ApiTags('user')
@@ -44,7 +44,10 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiCreatedResponse({ type: UserEntity })
-  async update(@Param('uuid') uuid: string, @Body() updateUserDto: any) {
+  async update(
+    @Param('uuid') uuid: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
     return new UserEntity(await this.userService.update(uuid, updateUserDto));
   }
 
