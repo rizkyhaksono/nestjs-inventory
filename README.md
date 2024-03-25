@@ -29,7 +29,7 @@
 ## Installation
 
 ```bash
-$ npm i # prever this because of winston dependencies
+$ npm install
 $ yarn install
 ```
 
