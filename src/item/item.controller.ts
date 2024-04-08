@@ -46,7 +46,7 @@ export class ItemController {
   @ApiBearerAuth()
   @ApiOkResponse({ type: ItemEntity })
   async findByUser(@Param('uuid') uuid: string) {
-    return await this.itemService.findByUser(uuid);
+    return this.itemService.findByUser(uuid);
   }
 
   @Patch(':id')
@@ -57,7 +57,7 @@ export class ItemController {
     @Param(':id') id: number,
     @Body() updateItem: UpdateItemDto,
   ) {
-    return await this.updateItem(id, updateItem);
+    return await this.itemService.update(id, updateItem);
   }
 
   @Delete(':id')

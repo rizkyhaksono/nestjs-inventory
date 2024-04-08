@@ -14,11 +14,11 @@ export class ItemService {
   }
 
   async findAll() {
-    return await this.prisma.inventoryItem.findMany();
+    return this.prisma.inventoryItem.findMany();
   }
 
   async findByUser(uuid: string) {
-    return await this.prisma.inventoryItem.findMany({
+    return this.prisma.inventoryItem.findMany({
       where: {
         userId: uuid,
       },
@@ -26,7 +26,7 @@ export class ItemService {
   }
 
   async update(itemId: number, updateItemDto: UpdateItemDto) {
-    return await this.prisma.inventoryItem.update({
+    return this.prisma.inventoryItem.update({
       where: {
         id: itemId,
       },
@@ -35,7 +35,7 @@ export class ItemService {
   }
 
   async remove(itemId: number) {
-    return await this.prisma.inventoryItem.delete({
+    return this.prisma.inventoryItem.delete({
       where: {
         id: itemId,
       },
