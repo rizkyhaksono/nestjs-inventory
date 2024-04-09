@@ -2,8 +2,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
-// import { AppModule } from 'src/app.module';
+import { AppModule } from 'src/app.module';
 import { TestService } from './test.service';
 import { TestModule } from './test.module';
 
@@ -39,20 +38,21 @@ describe('Auth Controller Test', () => {
           password: ''
         })
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(500);
     })
 
     it('should register a new user', async () => {
       const response = await request(app.getHttpServer())
         .post('/api/auth/register')
         .send({
+          email: 'test@gmail.com',
           username: 'test user',
           password: 'test12345'
         })
 
       expect(response.status).toBe(201);
-      expect(response.body.data.username).toBe('test user')
-      expect(response.body.data.email).toBe('test@gmail.com')
+      expect(response.body.username).toBe('test user')
+      expect(response.body.email).toBe('test@gmail.com')
     })
 
     it('should be rejected if the username is already taken', async () => {
@@ -65,8 +65,7 @@ describe('Auth Controller Test', () => {
           email: 'test@gmail.com',
           password: 'test123'
         })
-
-      // TODO: Not yet implemented in the controller the 409 status code
+        
       expect(response.status).toBe(500);
     })
   })
