@@ -66,7 +66,8 @@ describe('Auth Controller Test', () => {
           password: 'test123'
         })
         
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(409);
+      expect(response.body.message).toBe('Users already taken');
     })
   })
 });
