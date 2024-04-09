@@ -70,4 +70,60 @@ describe('Auth Controller Test', () => {
       expect(response.body.message).toBe('Users already taken');
     })
   })
+
+  describe('POST /api/auth/login', () => {
+    beforeEach(async () => {
+      await testService.deleteUser();
+    })
+
+    it('should be rejected if the request body is incomplete', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({
+          email: '',
+          password: ''
+        })
+
+      expect(response.status).toBe(404);
+    })
+
+    it('should be rejected if the user does not exist', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({
+          email: 'testwrong@gmail.com',
+          password: 'test123'
+        })
+
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe('No user found for email: testwrong@gmail.com');
+    })
+
+    it('should be rejected if the password is incorrect', async () => {
+      await testService.createUser();
+
+      const response = await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({
+          email: 'test@gmail.com',
+          password: 'wrong'
+        })
+
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe('Invalid password');
+    })
+
+    it('should login an user', async () => {
+      await testService.createUser();
+
+      const response = await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({
+          email: 'test@gmail.com',
+          password: 'test123'
+        })
+
+      expect(response.status).toBe(201);
+    })
+  })
 });
