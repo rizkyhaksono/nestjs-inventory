@@ -1,5 +1,7 @@
 import * as path from 'path';
+import { join } from 'path';
 import * as fs from 'fs';
+import { unlink } from 'fs/promises';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateItemDto } from './dto/create-item.dto';
@@ -62,24 +64,68 @@ export class ItemService {
     });
   }
 
-  async update(itemId: number, updateItemDto: UpdateItemDto) {
-    if (updateItemDto.imageUrl) {
-      const imageName = updateItemDto.imageUrl.split('\\').pop();
-      updateItemDto.imageUrl = `${process.env.BASE_URL}/api/item/image/${imageName}}`;
+  async update(
+    itemId: number,
+    updateItemDto: UpdateItemDto,
+    file: Express.Multer.File,
+  ) {
+    const item = await this.prisma.inventoryItem.findUnique({
+      where: { id: Number(itemId) },
+    });
+
+    if (!item) {
+      throw new NotFoundException(`Item with ID ${itemId} not found`);
     }
+
+    if (!itemId) {
+      throw new NotFoundException('itemId is required');
+    }
+
+    if (item.imageUrl) {
+      const previousImagePath = join(
+        process.cwd(),
+        item.imageUrl.split('/').pop(),
+      );
+      try {
+        await unlink(previousImagePath);
+      } catch (err) {
+        console.error(`Failed to delete the previous image: ${err}`);
+      }
+    }
+
+    const itemUpdate = {
+      ...updateItemDto,
+      imageUrl: file.path,
+    };
 
     return this.prisma.inventoryItem.update({
       where: {
-        id: itemId,
+        id: Number(itemId),
       },
-      data: updateItemDto,
+      data: itemUpdate,
     });
   }
 
   async remove(itemId: number) {
+    const item = await this.prisma.inventoryItem.findUnique({
+      where: { id: Number(itemId) },
+    });
+
+    if (!item) {
+      throw new NotFoundException(`Item with ID ${itemId} not found`);
+    }
+
+    const filePath = item.imageUrl;
+
+    try {
+      await unlink(filePath);
+    } catch (err) {
+      console.error(`Error deleting file: ${err}`);
+    }
+
     return this.prisma.inventoryItem.delete({
       where: {
-        id: itemId,
+        id: Number(itemId),
       },
     });
   }

@@ -12,9 +12,9 @@ export class UpdateItemDto {
   @ApiProperty()
   quantity: string;
 
-  @IsOptional()
   @IsString()
   @ApiProperty()
+  @IsOptional()
   imageUrl?: string;
 
   @IsString()

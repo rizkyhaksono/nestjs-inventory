@@ -9,6 +9,7 @@ import {
   Body,
   UseInterceptors,
   UploadedFile,
+  NotAcceptableException,
   Res,
 } from '@nestjs/common';
 import { ItemService } from './item.service';
@@ -45,7 +46,10 @@ export class ItemController {
       }),
       fileFilter: (req, file, cb) => {
         if (!/\.(jpg|jpeg|png)$/.exec(file.originalname)) {
-          return cb(new Error('Only image files are allowed!'), false);
+          return cb(
+            new NotAcceptableException('Only image files are allowed!'),
+            false,
+          );
         }
         cb(null, true);
       },
@@ -87,12 +91,34 @@ export class ItemController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiCreatedResponse()
+  @ApiCreatedResponse({ type: UserEntity })
+  @UseInterceptors(
+    FileInterceptor('imageUrl', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, cb) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, file.fieldname + '-' + uniqueSuffix + '.jpg');
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        if (!/\.(jpg|jpeg|png)$/.exec(file.originalname)) {
+          return cb(
+            new NotAcceptableException('Only image files are allowed!'),
+            false,
+          );
+        }
+        cb(null, true);
+      },
+    }),
+  )
   async updateItem(
-    @Param(':id') id: number,
+    @Param('id') id: number,
+    @UploadedFile() file: Express.Multer.File,
     @Body() updateItem: UpdateItemDto,
   ) {
-    return await this.itemService.update(id, updateItem);
+    return await this.itemService.update(id, updateItem, file);
   }
 
   @Delete(':id')
