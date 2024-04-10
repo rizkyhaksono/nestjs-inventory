@@ -114,6 +114,7 @@ curl -X 'PATCH' \
 ```
 
 Response Body (Success):
+
 ```json
 {
   "name": "string",
@@ -123,6 +124,7 @@ Response Body (Success):
 ```
 
 Response Body (Failed):
+
 ```json
 {
   "statusCode": 500,
@@ -144,6 +146,7 @@ curl -X 'DELETe' \
 ```
 
 Response Body (Success):
+
 ```json
 {
   "uuid": "string",
@@ -156,6 +159,7 @@ Response Body (Success):
 ```
 
 Response Body (Failed):
+
 ```json
 
 ```

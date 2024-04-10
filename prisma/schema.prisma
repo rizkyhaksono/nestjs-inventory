@@ -28,7 +28,8 @@ model User {
 model InventoryItem {
   id        Int      @id @default(autoincrement())
   name      String
-  quantity  Int
+  quantity  String
+  imageUrl  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

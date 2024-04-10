@@ -14,7 +14,10 @@ export class ItemEntity implements InventoryItem {
   name: string;
 
   @ApiProperty()
-  quantity: number;
+  quantity: string;
+
+  @ApiProperty()
+  imageUrl: string;
 
   @Exclude()
   createdAt: Date;
