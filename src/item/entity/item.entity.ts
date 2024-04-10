@@ -1,13 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { InventoryItem } from '@prisma/client';
-import { Exclude } from 'class-transformer';
 
 export class ItemEntity implements InventoryItem {
   constructor(partial: Partial<ItemEntity>) {
     Object.assign(this, partial);
   }
 
-  @Exclude()
+  @ApiProperty()
   id: number;
 
   @ApiProperty()
@@ -19,10 +18,10 @@ export class ItemEntity implements InventoryItem {
   @ApiProperty()
   imageUrl: string;
 
-  @Exclude()
+  @ApiProperty()
   createdAt: Date;
 
-  @Exclude()
+  @ApiProperty()
   updatedAt: Date;
 
   @ApiProperty()

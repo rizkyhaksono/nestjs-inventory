@@ -10,7 +10,6 @@ import {
   UseInterceptors,
   UploadedFile,
   Res,
-  NotFoundException,
 } from '@nestjs/common';
 import { ItemService } from './item.service';
 import {
@@ -22,8 +21,6 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { Response } from 'express';
-import * as path from 'path';
-import * as fs from 'fs';
 import { ItemEntity } from './entity/item.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateItemDto } from './dto/create-item.dto';
@@ -59,29 +56,13 @@ export class ItemController {
     @UploadedFile() file: Express.Multer.File,
     @Body() createItem: CreateItemDto,
   ) {
-    return await this.itemService.create({
-      ...createItem,
-      imageUrl: file.path,
-    });
+    return await this.itemService.create(createItem, file);
   }
 
   @ApiBearerAuth()
   @Get('image/:imgpath')
   async serveImage(@Param('imgpath') imgpath: string, @Res() res: Response) {
-    imgpath = imgpath.replace(/\\/g, '/');
-    const imagePath = path.resolve(
-      __dirname,
-      '..',
-      '..',
-      '..',
-      'uploads',
-      imgpath,
-    );
-
-    if (!fs.existsSync(imagePath)) {
-      throw new NotFoundException(`The file ${imgpath} does not exist.`);
-    }
-
+    const imagePath = await this.itemService.serveImage(imgpath);
     res.sendFile(imagePath);
   }
 
@@ -91,14 +72,7 @@ export class ItemController {
   @ApiOkResponse({ type: ItemEntity, isArray: true })
   async findAll() {
     const items = await this.itemService.findAll();
-    return items.map((item) => {
-      const itemEntity = new ItemEntity(item);
-      if (itemEntity.imageUrl) {
-        const imageName = itemEntity.imageUrl.split('\\').pop();
-        itemEntity.imageUrl = `${process.env.BASE_URL}/api/item/image/${imageName}`;
-      }
-      return itemEntity;
-    });
+    return items.map((item) => new ItemEntity(item));
   }
 
   @Get(':uuid')
@@ -106,15 +80,8 @@ export class ItemController {
   @ApiBearerAuth()
   @ApiOkResponse({ type: ItemEntity })
   async findByUser(@Param('uuid') uuid: string) {
-    const item = await this.itemService.findByUser(uuid);
-    return item.map((v) => {
-      const itemEntity = new ItemEntity(v);
-      if (itemEntity.imageUrl) {
-        const imageName = itemEntity.imageUrl.split('\\').pop();
-        itemEntity.imageUrl = `${process.env.BASE_URL}/api/item/image/${imageName}`;
-      }
-      return itemEntity;
-    });
+    const items = await this.itemService.findByUser(uuid);
+    return items.map((item) => new ItemEntity(item));
   }
 
   @Patch(':id')
