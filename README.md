@@ -74,6 +74,47 @@ $ yarn test:e2e
 $ yarn test:cov
 ```
 
+## Jenkinsfile
+
+First, you need to install the NodeJS plugin in Jenkins. Then, you can create a new pipeline job and use this following Jenkinsfile.
+
+```groovy
+pipeline {
+    agent any
+    environment {
+        NODE_VERSION = '20.11.1'
+        NPM_VERSION = '10.5.0'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Install') {
+            steps {
+                sh 'npm install'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'npm run test'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'npm run build'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh 'npm run start:prod'
+            }
+        }
+    }
+}
+```
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
