@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    tools {
+        nodejs "NodeJS"
+    }
+
+    stages {
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'npm run build'
+            }
+        }
+
+        stage('Deploy') {
+            environment {
+                VERCEL_TOKEN = credentials('vercel-token')
+            }
+            steps {
+                sh 'npm install -g vercel'
+                withCredentials([string(credentialsId: 'vercel-token', variable: 'VERCEL_TOKEN')]) {
+                    sh 'vercel login --token $VERCEL_TOKEN'
+                }
+                sh 'vercel --prod'
+                sh 'vercel logout'
+            }
+        }
+    }
+}
