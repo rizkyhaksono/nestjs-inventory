@@ -12,10 +12,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   imports: [
     PrismaModule,
     PassportModule,
-    // JwtModule.register({
-    //   secret: process.env.jwtSecret,
-    //   signOptions: { expiresIn: '24h' },
-    // }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
