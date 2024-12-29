@@ -9,7 +9,7 @@ import { UpdateItemDto } from './dto/update-item.dto';
 
 @Injectable()
 export class ItemService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(createItemDto: CreateItemDto, file: Express.Multer.File) {
     const item = {

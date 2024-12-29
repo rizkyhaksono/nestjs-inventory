@@ -9,7 +9,7 @@ import { RegisterDto } from './dto/register.dto';
 @Controller('api/auth')
 @ApiTags('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('login')
   @ApiOkResponse({ type: LoginEntity })
